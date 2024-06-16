@@ -1,0 +1,109 @@
+﻿@page
+@model LMS.Pages.Classes.Assignments.EditModel
+
+@{
+    ViewData["Title"] = "Edit Assignment";
+}
+
+<h1 class="row justify-content-center">Edit Assignment</h1>
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Assignment.Id" />
+            <div class="form-group mt-2">
+                <label asp-for="Assignment.Title" class="control-label"></label>
+                <input asp-for="Assignment.Title" class="form-control" />
+                <i><span asp-validation-for="Assignment.Title" class="text-danger small"></span></i>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="Assignment.Description" class="control-label"></label>
+                <input type="hidden" asp-for="Assignment.Description" id="HiddenDescription" />
+                <textarea class="form-control" id="TextareaEnabled" name="TextareaEnabled" rows="5">@Model.Assignment.Description</textarea>
+                <i><span asp-validation-for="Assignment.Description" class="text-danger small"></span></i>
+            </div>
+            <div class="row mt-2">
+                <div class="col-8">
+                    <div class="form-group">
+                        <label asp-for="Assignment.DueDate" class="control-label"></label>
+                        <input asp-for="Assignment.DueDate" class="form-control" />
+                        <i><span asp-validation-for="Assignment.DueDate" class="text-danger small"></span></i>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label asp-for="Assignment.MaxPoints" class="control-label"></label>
+                        <input asp-for="Assignment.MaxPoints" class="form-control" />
+                        <i><span asp-validation-for="Assignment.MaxPoints" class="text-danger small"></span></i>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label asp-for="Assignment.SubmissionType" class="control-label">Submission Type</label>
+                <div class="col-6">
+                    <div class="form-check">
+                        <input asp-for="Assignment.SubmissionType" class="form-check-input" type="radio" value="Text" id="flexTextSubmission"
+                               checked="@(Model.Assignment.SubmissionType == "Text" ? "checked" : null)">
+                        <label class="form-check-label" for="flexTextSubmission">Text</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-check">
+                        <input asp-for="Assignment.SubmissionType" class="form-check-input" type="radio" value="File" id="flexFileSubmission"
+                               checked="@(Model.Assignment.SubmissionType == "File" ? "checked" : null)">
+                        <label class="form-check-label" for="flexFileSubmission">File</label>
+                    </div>
+                </div>
+                <i><span asp-validation-for="Assignment.SubmissionType" class="text-danger small"></span></i>
+            </div>
+            <input type="hidden" asp-for="Assignment.ClassId" />
+            <div class="form-group mt-3 row">
+                <div class="col-md-7">
+                    <a asp-page="/Classes/Details" asp-route-id="@Model.Assignment.ClassId" class="btn btn-primary w-100">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Class
+                    </a>
+                </div>
+                <div class="col-md-5">
+                    <button type="submit" onclick="return validateDescription()" class="btn btn-success w-100">
+                        <i class="bi bi-check-lg me-2"></i> Save
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        tinymce.init({
+            selector: '#TextareaEnabled',
+            plugins: "lists",
+            menubar: "file edit format",
+            placeholder: 'Enter description here...',
+            setup: function (editor) {
+                editor.on('change', function () {
+                    // Update the value of the hidden input field
+                    var content = editor.getContent();
+                    document.getElementById('HiddenDescription').value = content;
+                });
+            }
+        });
+    </script>
+
+    <script>
+        function validateDescription() {
+            if (tinymce.get('TextareaEnabled').getContent() == "") {
+                var validationElement = document.querySelector('[data-valmsg-for="Assignment.Description"]');
+                var errorMessage = "The Description field is required.";
+                validationElement.innerText = errorMessage;
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+}

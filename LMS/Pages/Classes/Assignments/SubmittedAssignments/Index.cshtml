@@ -1,0 +1,149 @@
+﻿@page
+@model LMS.Pages.Classes.Assignments.SubmittedAssignments.IndexModel
+
+@{
+    ViewData["Title"] = "Submission List";
+}
+
+<h1>
+    Submission List <i class="bi bi-dash-lg"></i> @Model.assignment.Title
+    @if (Model.Submission.Any() && Model.Submission.All(s => s.Points != null))
+    {
+        <span class="badge bg-success align-middle pt-2" style="font-size:70%">All Graded</span>
+    }
+    else if (Model.Submission.Any() && Model.Submission.Any(s => s.Points == null))
+    {
+        <span class="badge bg-warning align-middle pt-2" style="font-size:70%">Needs Grading</span>
+    }
+</h1>
+<hr />
+
+<div style="display: flex;">
+@if (Model.Submission.Count > 0) {
+        <div style="width: 35%;">
+        <html>
+        <head>
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+            <script type="text/javascript">
+                google.charts.load("current", { packages: ["corechart"] });
+                google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Letter Grade', 'Student Grades'],
+                        ['A', @Model.studentGrades[0]],
+                        ['A-', @Model.studentGrades[1]],
+                        ['B+', @Model.studentGrades[2]],
+                        ['B', @Model.studentGrades[3]],
+                        ['B-', @Model.studentGrades[4]],
+                        ['C+', @Model.studentGrades[5]],
+                        ['C', @Model.studentGrades[6]],
+                        ['C-', @Model.studentGrades[7]],
+                        ['D+', @Model.studentGrades[8]],
+                        ['D', @Model.studentGrades[9]],
+                        ['D-', @Model.studentGrades[10]],
+                        ['F', @Model.studentGrades[11]]
+                    ]);
+
+                    var options = {
+                        title: 'Student Performance',
+                        pieHole: 0.4,
+                        legend: 'none',
+                        pieSliceText: 'label',
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                    chart.draw(data, options);
+                }
+            </script>
+        </head>
+        <body>
+            <div class="d-flex justify-content-center">
+                <div id="donutchart" style="width: 300px; height: 300px;"></div>
+            </div>
+            <hr />
+            <div class="mt-2">
+                <a asp-page="/Classes/Details" asp-route-id="@Model.assignment.ClassId" class="btn btn-primary">
+                    <i class="bi bi-arrow-left me-2"></i> Back to Class
+                </a>
+            </div>
+        </body>
+    </html>
+</div>
+}
+
+<div style="width: 65%;">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                @* <th>
+                    @Html.DisplayNameFor(model => model.Submission[0].Assignment)
+                </th> *@
+                <th>
+                    Student Name
+                </th>
+                <th>
+                    Time Submitted
+                </th>
+                <th>
+                    Points
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model.Submission) {
+                <tr onclick="location.href='@Url.Page("/Classes/Assignments/SubmittedAssignments/Grading", new { id = item.Id })';" style="cursor: pointer;">
+                @* <td>
+                    @Html.DisplayFor(modelItem => item.Assignment.Title)
+                    @if (item.Points is not null)
+                    {
+                        <span class="badge bg-success align-middle">Graded</span>
+                    }
+                </td> *@
+                <td>
+                    @(item.Student.FirstName + " " + item.Student.LastName)
+                </td>
+                <td>
+                    @($"{item.TurnInTime:MMM d, yyyy h:mm tt}")
+                    @if (item.TurnInTime > item.Assignment.DueDate)
+                    {
+                        <span class="badge bg-danger align-middle">Late</span>
+                    }
+                </td>
+                <td>
+                    @{
+                        var points = item.Points is not null
+                        ? $"<b>{item.Points}</b>"
+                        : "-";
+                    }
+                    @Html.Raw($"{points} / {item.Assignment.MaxPoints}")
+                </td>
+                <td class="align-middle" style="width:20%">
+                    @if (item.Points is not null)
+                    {
+                        <a asp-page="/Classes/Assignments/SubmittedAssignments/Grading" asp-route-id="@item.Id" class="btn btn-success w-100">
+                            <i class="bi bi-check-lg me-1"></i> Graded
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-page="/Classes/Assignments/SubmittedAssignments/Grading" asp-route-id="@item.Id" class="btn btn-primary w-100">
+                            <i class="bi bi-pen me-2"></i> Grade
+                        </a>
+                    }
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+</div>
+
+@if (Model.Submission.Count <= 0)
+{
+    <div class="mt-2">
+        <a asp-page="/Classes/Details" asp-route-id="@Model.assignment.ClassId" class="btn btn-primary">
+            <i class="bi bi-arrow-left me-2"></i> Back to Class
+        </a>
+    </div>
+}

@@ -1,0 +1,242 @@
+﻿@page
+@model LMS.Pages.Classes.Assignments.SubmittedAssignments.GradingModel
+
+@{
+    ViewData["Title"] = "Submission Grading";
+}
+
+@* <style>
+    .grade-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+        gap: 10px;
+    }
+
+    .grey-box {
+        background-color: #f7f7f7;
+        padding: 20px;
+        border-radius: 10px;
+        width: 60%;
+    }
+</style> *@
+
+<form method="post">
+    <div class="row">
+        <div class="col-8">
+            <h1>
+                @Model.currentSubmission.Assignment.Title
+                @if (Model.currentSubmission.TurnInTime > Model.currentSubmission.Assignment.DueDate)
+                {
+                    <span class="badge bg-danger align-middle pt-2" style="font-size:70%">Late</span>
+                }
+                else if (DateTime.Now > Model.currentSubmission.Assignment.DueDate)
+                {
+                    <span class="badge bg-danger align-middle pt-2" style="font-size:70%">Missing</span>
+                }
+                @if (Model.currentSubmission.Points is not null)
+                {
+                    <span class="badge bg-success align-middle pt-2" style="font-size:70%">Graded</span>
+                }
+            </h1>
+        </div>
+        <div class="col-4 mt-0 d-flex justify-content-end">
+            <input asp-for="currentSubmission.Id" type="hidden">
+            <input asp-for="currentSubmission.AssignmentId" type="hidden">
+            <input asp-for="currentSubmission.StudentId" type="hidden">
+            <input asp-for="currentSubmission.TurnInTime" type="hidden">
+            <input asp-for="currentSubmission.SubmissionText" type="hidden">
+            <input asp-for="currentSubmission.SubmissionFileName" type="hidden">
+            <input asp-for="currentSubmission.SubmissionFilePath" type="hidden">
+
+            <input asp-for="currentSubmission.Points" value="@Model.currentSubmission.Points" placeholder="Grade" class="form-control me-2 p-1 grade-input" id="Grade" style="width:6.75rem;" oninput="validateGrade()">
+            <h2 class="mt-1">/ @Model.currentSubmission.Assignment.MaxPoints Points</h2>
+        </div>
+    </div>
+    <hr />
+
+    <div class="container">
+        <div class="row">
+
+            <!-- Assignment Details -->
+            <div class="col-md-6">
+                <h3 class="mt-2">Assignment Details</h3>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-5">
+                        Class @Html.DisplayNameFor(model => model.currentSubmission.Assignment.Classes.Title)
+                    </dt>
+                    <dd class="col-sm-7">
+                        @Html.DisplayFor(model => model.currentSubmission.Assignment.Classes.Title)
+                    </dd>
+                    <dt class="col-sm-5">
+                        @Html.DisplayNameFor(model => model.currentSubmission.Assignment.Classes.CourseNumber)
+                    </dt>
+                    <dd class="col-sm-7">
+                        @Html.DisplayFor(model => model.currentSubmission.Assignment.Classes.CourseNumber)
+                    </dd>
+                    <dt class="col-sm-5">
+                        @Html.DisplayNameFor(model => model.currentSubmission.Assignment.DueDate)
+                    </dt>
+                    <dd class="col-sm-7">
+                        @($"{Model.currentSubmission.Assignment.DueDate:MMM d, yyyy h:mm tt}")
+                    </dd>
+                    <dt class="col-sm-5">
+                        Student Name
+                    </dt>
+                    <dd class="col-sm-7">
+                        @($"{Model.currentSubmission.Student.FirstName} {Model.currentSubmission.Student.LastName}")
+                    </dd>
+                    <dt class="col-sm-5">
+                        Submission Date
+                    </dt>
+                    <dd class="col-sm-7">
+                        @($"{Model.currentSubmission.TurnInTime:MMM d, yyyy h:mm tt}")
+                    </dd>
+                </dl>
+
+                <h5>Description</h5>
+                <hr />
+
+                <div>
+                    @Html.Raw(Model.currentSubmission.Assignment.Description)
+                </div>
+                <hr />
+
+                <div class="mt-3">
+                    <a asp-page="./Index" asp-route-id="@Model.currentSubmission.AssignmentId" class="btn btn-primary">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Submissions
+                    </a>
+                </div>
+            </div>
+
+            <!-- Submission -->
+            <div class="col-md-6">
+                <h3 class="mt-2">Submission</h3>
+                <hr />
+
+                @if (Model.currentSubmission.Assignment.SubmissionType == "Text")
+                {
+                    <div class="form-group mt-4">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5>Text Entry <i class="bi bi-journal-text ms-2"></i></h5>
+                            </div>
+                            <div class="text-end">
+                                <h5>@Model.currentSubmission.Student.FirstName @Model.currentSubmission.Student.LastName</h5>
+                            </div>
+                        </div>
+                        <textarea class="form-control" id="TextareaDisabled" name="TextareaDisabled" rows="6">@Model.currentSubmission.SubmissionText</textarea>
+                    </div>
+                }
+                else if (Model.currentSubmission.Assignment.SubmissionType == "File")
+                {
+                    <div class="form-group mt-4">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5>File Upload <i class="bi bi-file-earmark-arrow-up ms-2"></i></h5>
+                            </div>
+                            <div class="text-end">
+                                <h5>@Model.currentSubmission.Student.FirstName @Model.currentSubmission.Student.LastName</h5>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <input asp-for="@Model.currentSubmission.SubmissionFileName" class="form-control" disabled />
+                            <a asp-page-handler="DownloadFile" asp-route-submissionId="@Model.currentSubmission.Id" class="btn btn-primary d-flex align-items-center">
+                                <i class="bi bi-file-earmark-arrow-down me-2"></i> Download
+                            </a>
+                        </div>
+                    </div>
+                }
+
+                <div class="form-group mt-3 text-end">
+                    <button type="submit" class="btn btn-success" id="submitButton" disabled>
+                        <i class="bi bi-check-lg me-2"></i> Submit Grade
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+
+@section Scripts
+{
+    <script>
+        tinymce.init({
+            selector: '#TextareaDisabled',
+            plugins: "lists",
+            menubar: "file edit format",
+            readonly: true
+        });
+    </script>
+
+    <script>
+        function validateGrade() {
+            var gradeValue = document.getElementById('Grade').value;
+            var submitButton = document.getElementById('submitButton');
+
+            // Disable button if grade input is empty or not a valid integer
+            submitButton.disabled = gradeValue === '' || !Number.isInteger(Number(gradeValue));
+        }
+    </script>
+}
+
+
+
+
+@* 
+
+<div class="container">
+    <div class="row">
+            <div class="col-md-6">
+            <h2>@Model.currentSubmission.Assignment.Title</h2>
+            <hr />
+            <p>Assignment Description: @Model.currentSubmission.Assignment.Description</p>
+            <p>Due Date: @($"{Model.currentSubmission.Assignment.DueDate:M/dd/yyyy h:mm tt}")</p>
+            @if (Model.currentSubmission.Assignment.SubmissionType == "Text")
+            {
+                <textarea class="form-control" id="Textarea" name="Textarea" rows="6" disabled style="resize: none;">@Model.currentSubmission.SubmissionText</textarea>
+            } else
+            {
+                <h5>File Download <i class="bi bi-file-earmark-arrow-up ms-2"></i></h5>
+                <div class="d-flex">
+                    <input asp-for="@Model.currentSubmission.SubmissionFileName" class="form-control" disabled />
+                    <a asp-page-handler="DownloadFile" asp-route-submissionId="@Model.currentSubmission.Id" class="btn btn-primary d-flex align-items-center">
+                        <i class="bi bi-file-earmark-arrow-down me-2"></i> Download
+                    </a>
+                </div>
+            }
+        </div>
+        <div class="col-md-4 offset-md-2">
+            <form method="post">
+                <input asp-for="currentSubmission.Id" type="hidden">
+                <input asp-for="currentSubmission.AssignmentId" type="hidden">
+                <input asp-for="currentSubmission.StudentId" type="hidden">
+                <input asp-for="currentSubmission.TurnInTime" type="hidden">
+                <input asp-for="currentSubmission.SubmissionText" type="hidden">
+                <input asp-for="currentSubmission.SubmissionFileName" type="hidden">
+                <input asp-for="currentSubmission.SubmissionFilePath" type="hidden">
+
+                <div class="grey-box">
+                    <div class="grade-container">
+                        <p style="text-align: center;">
+                            <input asp-for="currentSubmission.Points" value="@Model.currentSubmission.Points" placeholder="Enter Grade" style="width: 60%;"> / @Model.currentSubmission.Assignment.MaxPoints
+                        </p>
+                        <button type="submit" class="btn btn-primary">@(Model.currentSubmission.Points != null ? "Redo Grade" : "Submit Grade")</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @if (Model.currentSubmission.Assignment.DueDate < Model.currentSubmission.TurnInTime)
+        {
+            <p style="color: red;">This assignment is late!</p>
+        }
+        <div class="col-md-2 mt-2">
+            <a asp-page="./Index" asp-route-id="@Model.currentSubmission.AssignmentId" class="btn btn-primary">Back to Submissions</a>
+        </div>
+    </div>
+</div>
+ *@

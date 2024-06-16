@@ -1,0 +1,303 @@
+﻿@page
+@model LMS.Pages.Submission.IndexModel
+
+@{
+    ViewData["Title"] = "Submission";
+}
+
+
+<div class="row">
+    <div class="col-8">
+        <h1>
+            @Model.Assignment.Title
+            @if (Model.isSubmitted && Model.Submission.TurnInTime > Model.Assignment.DueDate)
+            {
+                <span class="badge bg-danger align-middle pt-2" style="font-size:70%">Late</span>
+            }
+            else if (!Model.isSubmitted && DateTime.Now > Model.Assignment.DueDate)
+            {
+                <span class="badge bg-danger align-middle pt-2" style="font-size:70%">Missing</span>
+            }
+            @if (Model.isSubmitted && Model.Submission.Points is not null)
+            {
+                <span class="badge bg-success align-middle pt-2" style="font-size:70%">Graded</span>
+            }
+        </h1>
+    </div>
+    <div class="col-4 text-end">
+        @if (Model.isSubmitted)
+        {
+            <h2 class="mt-2">@(Model.Submission.Points is null ? "-" : Model.Submission.Points) / @Model.Assignment.MaxPoints Points</h2>
+        }
+        else
+        {
+            <h2 class="mt-2">@Model.Assignment.MaxPoints Points</h2>
+        }
+    </div>
+</div>
+<hr />
+
+
+<div class="container">
+    <div class="row">
+
+        <!-- Assignment Details -->
+        <div class="col-md-6">
+            <h3 class="mt-2">Assignment Details</h3>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-5">
+                    Class @Html.DisplayNameFor(model => model.Assignment.Classes.Title)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Assignment.Classes.Title)
+                </dd>
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Assignment.Classes.CourseNumber)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Assignment.Classes.CourseNumber)
+                </dd>
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Assignment.DueDate)
+                </dt>
+                <dd class="col-sm-7">
+                    @($"{Model.Assignment.DueDate:MMM d, yyyy h:mm tt}")
+                </dd>
+                @if (Model.isSubmitted)
+                {
+                    <dt class="col-sm-5">
+                        Submission Date
+                    </dt>
+                    <dd class="col-sm-7">
+                        @($"{Model.Submission.TurnInTime:MMM d, yyyy h:mm tt}")
+                    </dd>
+                }
+            </dl>
+
+            <h5>Description</h5>
+            <hr />
+
+            <div>
+                @Html.Raw(Model.Assignment.Description)
+            </div>
+            <hr />
+
+            <div class="mt-3">
+                <a asp-page="/Classes/Details" asp-route-id="@Model.Assignment.ClassId" class="btn btn-primary">
+                    <i class="bi bi-arrow-left me-2"></i> Back to Class
+                </a>
+            </div>
+        </div>
+
+        <!-- Submission -->
+        <div class="col-md-6">
+            @if (Model.isSubmitted)
+            {
+                <div class="row">
+                    <div class="col-5">
+                        <h3 class="mt-2">Submission</h3>
+                    </div>
+                    <div class="col-7 text-end">
+                        <h3 class="mt-2 text-success"><i class="bi bi-check-lg"></i> Submitted</h3>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <h3 class="mt-2">Submission</h3>
+            }
+            <hr />
+
+            @if (Model.isSubmitted)
+            {
+                @if (Model.Assignment.SubmissionType == "Text")
+                {
+                    <div class="form-group mt-4">
+                        <h5>Text Entry <i class="bi bi-journal-text ms-2"></i></h5>
+                        <textarea class="form-control" id="TextareaDisabled" name="TextareaDisabled" rows="6">@Model.Submission.SubmissionText</textarea>
+                    </div>
+                    <form method="post" asp-page-handler="Remove">
+                        <div class="form-group mt-3 text-end">
+                            <input type="hidden" name="sid" value=@Model.Submission.Id />
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-x-lg me-2"></i> Remove Submission
+                            </button>
+                        </div>
+                    </form>
+                }
+                else if (Model.Assignment.SubmissionType == "File")
+                {
+                    <div class="form-group mt-4">
+                        <h5>File Upload <i class="bi bi-file-earmark-arrow-up ms-2"></i></h5>
+                        <div class="d-flex">
+                            <input asp-for="@Model.Submission.SubmissionFileName" class="form-control" disabled />
+                            <a asp-page-handler="DownloadFile" asp-route-submissionId="@Model.Submission.Id" class="btn btn-primary d-flex align-items-center">
+                                <i class="bi bi-file-earmark-arrow-down me-2"></i> Download
+                            </a>
+                        </div>
+                    </div>
+                    <form method="post" asp-page-handler="Remove">
+                        <div class="form-group mt-3 text-end">
+                            <input type="hidden" name="sid" value=@Model.Submission.Id />
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-x-lg me-2"></i> Remove Submission
+                            </button>
+                        </div>
+                    </form>
+                }
+            }
+            else
+            {
+                @if (Model.Assignment.SubmissionType == "Text")
+                {
+                    <form method="post" asp-page-handler="SubmitT">
+                        <div class="form-group mt-4">
+                            <h5>Text Entry <i class="bi bi-journal-text ms-2"></i></h5>
+                            <textarea class="form-control" id="TextareaEnabled" name="TextareaEnabled" rows="6"></textarea>
+                            <input type="hidden" name="aid" value=@Model.Assignment.Id />
+                        </div>
+                        <div class="form-group mt-3 text-end">
+                            <button type="submit" class="btn btn-success" id="submitButton" disabled>
+                                <i class="bi bi-check-lg me-2"></i> Submit Assignment
+                            </button>
+                        </div>
+                    </form>
+                }
+                else if (Model.Assignment.SubmissionType == "File")
+                {
+                    <form method="post" asp-page-handler="SubmitF" enctype="multipart/form-data">
+                        <div class="form-group mt-4">
+                            <h5>File Upload <i class="bi bi-file-earmark-arrow-up ms-2"></i></h5>
+                            <input type="file" name="SFile" class="form-control" onchange="validateFileInput()" />
+                            <input type="hidden" name="aid" value=@Model.Assignment.Id />
+                        </div>
+                        <div class="form-group mt-3 text-end">
+                            <button type="submit" class="btn btn-success" id="submitButton" disabled>
+                                <i class="bi bi-check-lg me-2"></i> Submit Assignment
+                            </button>
+                        </div>
+                    </form>
+                }
+            }
+            @if (Model.isSubmitted && Model.Submission.Points is not null)
+            {
+                <div class="d-flex justify-content-center">
+                    <div id="donutchart" style="width: 300px; height: 300px;"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="confetti"></div>
+
+
+
+
+@section Scripts
+{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var gradesData = @Html.Raw(Json.Serialize(ViewData["GradesData"]));
+            if (gradesData) {
+                var data = google.visualization.arrayToDataTable(gradesData);
+
+                var options = {
+                    title: 'Student Performance',
+                    pieHole: 0.4,
+                    legend: 'none',
+                    pieSliceText: 'label',
+                };
+
+                var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                chart.draw(data, options);
+            }
+        }
+    </script>
+
+    <script>
+        tinymce.init({
+            selector: '#TextareaEnabled',
+            plugins: "lists",
+            menubar: "file edit format",
+            placeholder: 'Enter your submission here...',
+            setup: function (editor) {
+                editor.on('input', function () {
+                    // Enable/disable submit button based on the content of the editor
+                    var submitButton = document.getElementById('submitButton');
+                    submitButton.disabled = editor.getContent().trim() === '';
+                });
+            }
+        });
+        tinymce.init({
+            selector: '#TextareaDisabled',
+            plugins: "lists",
+            menubar: "file edit format",
+            readonly: true
+        });
+    </script>
+
+    <script>
+        function validateFileInput() {
+            var fileInput = document.querySelector('input[type="file"]');
+            var submitButton = document.getElementById('submitButton');
+
+            // Disable button if no file is selected
+            submitButton.disabled = !fileInput.files || fileInput.files.length === 0;
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Check if the confetti has been triggered
+            var isConfettiTriggered = getCookie("ConfettiTriggered");
+            if (isConfettiTriggered === "true") {
+                triggerConfettiAnimation();
+                // Clear the confetti trigger cookie
+                document.cookie = "ConfettiTriggered=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            }
+        });
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function triggerConfettiAnimation() {
+            let interval = setInterval(function () {
+                createConfetti();
+            }, 100); // Adjust the interval time as needed
+            setTimeout(function () {
+                clearInterval(interval);
+            }, 3000); // Adjust the total duration of confetti falling
+        }
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.backgroundColor = getRandomColor();
+            // Ensure confetti remains within the viewport width
+            confetti.style.left = `${Math.random() * (window.innerWidth - 40)}px`; // Adjusted to window.innerWidth - 40
+            confetti.style.top = `${window.innerHeight - 400}px`;
+            confetti.style.animationDuration = `${Math.random() * 3 + 1}s`; // Randomize animation duration
+            document.getElementById('confetti').appendChild(confetti);
+            setTimeout(() => {
+                confetti.remove();
+            }, 4000);
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    </script>
+}

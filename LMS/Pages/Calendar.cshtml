@@ -1,0 +1,58 @@
+﻿@page
+@model LMS.Pages.CalendarModel
+@{
+    ViewData["Title"] = "Calendar";
+    var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id").Value;
+}
+
+
+<div id='calendar' class="lux"></div>
+
+
+
+
+@section Scripts{
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            themeSystem: 'bootstrap5',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                prev: '<',
+                next: '>'
+            },
+            events: function (fetchInfo, successCallback, failureCallback) {
+                // Fetch events from the server
+                fetch('/Calendar?handler=Events')
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (events) {
+                        return successCallback(events);
+                    })
+                    .catch(function (error) {
+                        return failureCallback(error);
+                    });
+            },
+            eventDisplay: 'block',
+            eventTimeFormat: { // like '1:30 pm'
+                hour: 'numeric',
+                minute: '2-digit',
+                meridiem: true
+            }
+
+
+        });
+
+        calendar.render();
+    });
+    </script>
+ }
+

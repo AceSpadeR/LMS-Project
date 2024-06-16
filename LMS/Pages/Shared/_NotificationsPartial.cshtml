@@ -1,0 +1,173 @@
+﻿
+
+<a class="nav-link" href="#" onclick="loadNotifications()">
+    <i class="bi bi-bell" style="font-size: 1.2rem; vertical-align: middle;"></i>
+</a>
+
+
+<script>
+    // JavaScript code for notifications here...
+    async function loadNotifications() {
+        try {
+            const response = await fetch('/Account/Notifications?handler=Notifications', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch notifications');
+            }
+
+            const notificationsData = await response.json();
+            updateNotificationList(notificationsData);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    let isOffCanvasShown = false;
+
+    function updateNotificationList(notificationsData) {
+        const notificationList = document.getElementById('notification-list');
+        notificationList.innerHTML = '';
+
+        if (notificationsData.length === 0) {
+            notificationList.innerHTML = '<p>No new notifications</p>';
+        } else {
+            notificationsData.forEach(notification => {
+                const toastLink = document.createElement('a');
+                if (notification.title == 'Assignment Submitted')
+                {
+                    toastLink.href = `/Classes/Assignments/SubmittedAssignments?id=${notification.assignmentId}`;
+                }
+                else
+                {
+                    toastLink.href = `/Classes/Assignments/Submission?id=${notification.assignmentId}`;
+                }
+                toastLink.style.textDecoration = 'none';
+
+                const toastDiv = document.createElement('div');
+                toastDiv.classList.add('toast', 'show', 'mb-2');
+                toastDiv.style.boxShadow = 'none';
+
+                const toastHeader = document.createElement('div');
+                toastHeader.classList.add('toast-header');
+                toastHeader.style.backgroundColor = '#f8f9fa';
+
+                toastLink.addEventListener('mouseover', () => {
+                    toastDiv.style.backgroundColor = '#f8f9fa';
+                    toastHeader.style.backgroundColor = '#e9ecef';
+                });
+
+                toastLink.addEventListener('mouseout', () => {
+                    toastDiv.style.backgroundColor = 'transparent';
+                    toastHeader.style.backgroundColor = '#f8f9fa';
+                });
+
+                const headerElement = document.createElement('h6');
+                headerElement.classList.add('me-auto', 'mb-0');
+                headerElement.textContent = notification.title;
+
+                const timeElement = document.createElement('small');
+                timeElement.textContent = formatTimeAgo(notification.notifyDate);
+
+                const closeButton = document.createElement('button');
+                closeButton.classList.add('btn-close', 'ms-2', 'mb-1');
+                closeButton.setAttribute('type', 'button');
+                closeButton.setAttribute('aria-label', 'Close');
+
+                closeButton.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    console.log('Close button clicked');
+                    deleteNotification(notification.id);
+                });
+
+                const toastBody = document.createElement('div');
+                toastBody.classList.add('toast-body');
+                toastBody.textContent = notification.message;
+
+                toastHeader.appendChild(headerElement);
+                toastHeader.appendChild(timeElement);
+                toastHeader.appendChild(closeButton);
+
+                toastDiv.appendChild(toastHeader);
+                toastDiv.appendChild(toastBody);
+
+                toastLink.appendChild(toastDiv);
+
+                notificationList.appendChild(toastLink);
+            });
+        }
+
+        // Get the offcanvas element
+        const notificationsOffCanvas = document.getElementById('notifications');
+
+        // Add event listener for when the offcanvas is shown
+        notificationsOffCanvas.addEventListener('shown.bs.offcanvas', function () {
+            isOffCanvasShown = true;
+        });
+
+        // Add event listener for when the offcanvas is hidden
+        notificationsOffCanvas.addEventListener('hidden.bs.offcanvas', function () {
+            isOffCanvasShown = false;
+        });
+
+        // Open the off-canvas manually
+        if (!isOffCanvasShown) {
+            const offCanvas = new bootstrap.Offcanvas(notificationsOffCanvas);
+            offCanvas.show();
+        }
+    }
+
+    async function deleteNotification(notificationId) {
+        try {
+            // Obtain anti-forgery token from the page
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            // Make an API request to delete the notification with the given ID
+            const formData = new FormData();
+            formData.append('NotificationIdToDelete', notificationId);
+
+            const response = await fetch('/Account/Notifications?handler=DeleteNotification', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete notification');
+            }
+
+            // Reload notifications after deletion
+            loadNotifications();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function formatTimeAgo(dateTimeString) {
+        const currentDate = new Date();
+        const notificationDate = new Date(dateTimeString);
+        const timeDifference = currentDate - notificationDate;
+
+        const seconds = Math.floor(timeDifference / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (days > 0) {
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        } else if (hours > 0) {
+            return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        } else if (minutes > 0) {
+            return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        } else {
+            return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
+        }
+    }
+</script>

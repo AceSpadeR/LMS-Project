@@ -1,0 +1,97 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+
+<div class="container">
+    <div class="row">
+
+        <!-- Class Cards Dashboard -->
+        <div class="col-md-9">
+            <h1>Dashboard</h1>
+            <hr />
+            <div class="d-flex flex-wrap justify-content-center">
+                @foreach (var aClass in Model.ClassList)
+                {
+                    <div class="card border-primary my-3 mx-3" style="width: 20rem;">
+                        <a asp-page="/Classes/Details" asp-route-id="@aClass.Id" style="text-decoration: none;">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between">
+                                <h4 class="card-title my-1">@aClass.CourseNumber</h4>
+                                <h4 class="card-title my-1">(@aClass.CreditHours)</h4>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">@aClass.Title</h5>
+                                <div class="card-text">@aClass.Location</div>
+                                <div class="card-text">
+                                    @foreach (var day in aClass.MeetingDays)
+                                    {
+                                        var shortDay = GetDayAbbreviation(day.ToString()) + " ";
+                                        @shortDay
+                                    }
+                                    &nbsp;
+                                    @($"{aClass.StartTime:h\\:mm tt} - {aClass.EndTime:h\\:mm tt}")
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- To-Do List Side Bar -->
+        <div class="col-md-3">
+            <h3 class="mt-2">To-Do</h3>
+            <hr />
+            <div class="list-group">
+                @foreach (var assignment in Model.AssignmentList)
+                {
+                    if (User.IsInRole("Student"))
+                    {
+                        <div class="list-group-item list-group-item-action align-items-start">
+                            <a asp-page="/Classes/Assignments/Submission/Index" asp-route-id="@assignment.Id">
+                                <h5 class="mb-1 stretched-link">@assignment.Title</h5>
+                            </a>
+                            <b><small class="d-block text-primary">@assignment.Classes.CourseNumber</small></b>
+                            <small class="d-block">@assignment.MaxPoints points</small>
+                            <small class="d-block">@($"{assignment.DueDate:MMM d} at {assignment.DueDate: h:mm tt}")</small>
+                        </div>
+                    }
+                    else if (User.IsInRole("Instructor"))
+                    {
+                        <div class="list-group-item list-group-item-action align-items-start">
+                            <a asp-page="/Classes/Assignments/SubmittedAssignments/Index" asp-route-id="@assignment.Id">
+                                <h5 class="mb-1 stretched-link">@assignment.Title</h5>
+                            </a>
+                            <b><small class="d-block text-primary">@assignment.Classes.CourseNumber</small></b>
+                            <small class="d-block">@assignment.MaxPoints points</small>
+                            <small class="d-block">@($"{assignment.DueDate:MMM d} at {assignment.DueDate: h:mm tt}")</small>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetDayAbbreviation(string day)
+    {
+        switch (day)
+        {
+            case "Monday":
+                return "M";
+            case "Tuesday":
+                return "T";
+            case "Wednesday":
+                return "W";
+            case "Thursday":
+                return "TH";
+            case "Friday":
+                return "F";
+            default:
+                return day;
+        }
+    }
+}

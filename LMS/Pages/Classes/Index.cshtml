@@ -1,0 +1,118 @@
+﻿@page
+@model LMS.Pages.Classes.IndexModel
+
+@{
+    ViewData["Title"] = "Manage Classes";
+    var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "Id").Value;
+}
+
+<div class="row">
+    <div class="col-6">
+        <h1>Manage Your Classes</h1>
+    </div>
+    <div class="col-6 text-end">
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i> Create Class
+        </a>
+    </div>
+</div>
+<hr />
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].DepartmentName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].CourseNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].Location)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].CreditHours)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].EndTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].MeetingDays)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Classes.Where(c => c.ProfId == int.Parse(userIdClaim)))
+        {
+            <tr onclick="location.href='@Url.Page("./Details", new { id = item.Id })';" style="cursor: pointer;">
+            <td>
+                @Html.DisplayFor(modelItem => item.DepartmentName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreditHours)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndTime)
+            </td>
+            <td>
+                @foreach (var day in item.MeetingDays)
+                {
+                    var shortDay = GetDayAbbreviation(day.ToString()) + " ";
+                    @shortDay
+                }
+            </td>
+
+            <td class="align-middle">
+                <div class="w-100 btn-group" role="group">
+                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary ms-0 me-1">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger me-0 ms-1">
+                        <i class="bi bi-trash-fill"></i> Delete
+                    </a>
+                </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+@functions {
+    string GetDayAbbreviation(string day)
+    {
+        switch (day)
+        {
+            case "Monday":
+                return "M";
+            case "Tuesday":
+                return "T";
+            case "Wednesday":
+                return "W";
+            case "Thursday":
+                return "TH";
+            case "Friday":
+                return "F";
+            default:
+                return day;
+        }
+    }
+}

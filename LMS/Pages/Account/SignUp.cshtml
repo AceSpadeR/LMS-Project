@@ -1,0 +1,115 @@
+﻿@page
+@model SignUpModel
+
+@{
+    ViewData["Title"] = "Sign-Up";
+}
+
+<h1 class="row justify-content-center">Sign-Up</h1>
+
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row mt-2">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label asp-for="User.FirstName" class="control-label">First Name <span class="text-danger">*</span></label>
+                        <input asp-for="User.FirstName" class="form-control" required />
+                        <i><span asp-validation-for="User.FirstName" class="text-danger small"></span></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label asp-for="User.LastName" class="control-label">Last Name <span class="text-danger">*</span></label>
+                        <input asp-for="User.LastName" class="form-control" required />
+                        <i><span asp-validation-for="User.LastName" class="text-danger small"></span></i>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="User.Email" class="control-label">Email <span class="text-danger">*</span></label>
+                <input asp-for="User.Email" class="form-control" required />
+                <i><span asp-validation-for="User.Email" class="text-danger small"></span></i>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="User.BirthDate" class="control-label">Birth Date <span class="text-danger">*</span></label>
+                <input asp-for="User.BirthDate" class="form-control" data-val-minimumage="Must be at least 16 years old." data-val-minimumage-minage="16" />
+                <i><span asp-validation-for="User.BirthDate" class="text-danger small"></span></i>
+            </div>
+            <div class="row mt-2">
+                <label asp-for="User.Role" class="control-label">Role <span class="text-danger">*</span></label>
+                <div class="col-6">
+                    <div class="form-check">
+                        <input asp-for="User.Role" class="form-check-input" type="radio" value="Student" id="flexRadioStudent" checked>
+                        <label class="form-check-label" for="flexRadioStudent">Student</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-check">
+                        <input asp-for="User.Role" class="form-check-input" type="radio" value="Instructor" id="flexRadioInstructor">
+                        <label class="form-check-label" for="flexRadioInstructor">Instructor</label>
+                    </div>
+                </div>
+                <i><span asp-validation-for="User.Role" class="text-danger small"></span></i>
+            </div>
+            <div class="form-group mt-4">
+                <label asp-for="User.Password" class="control-label">Password <span class="text-danger">*</span></label>
+                <input asp-for="User.Password" class="form-control" required />
+                <i><span asp-validation-for="User.Password" class="text-danger small"></span></i>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="User.ConfirmPassword" class="control-label">Confirm Password <span class="text-danger">*</span></label>
+                <input asp-for="User.ConfirmPassword" class="form-control" required />
+                <i><span asp-validation-for="User.ConfirmPassword" class="text-danger small"></span></i>
+            </div>
+            <div class="form-group mt-3 d-grid gap-2" style="text-align:center">
+                <button type="submit" id="submitButton" class="btn btn-primary">
+                    <span id="buttonText">Create Account</span>
+                    <span id="loadingSpinner" class="spinner-border spinner-border-sm" style="display: none;"></span>
+                </button>
+            </div>
+        </form>
+        <div class="text-center mt-2">
+            <a asp-page="./Login">Return to Sign-In</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var submitButton = document.getElementById('submitButton');
+            var loadingSpinner = document.getElementById('loadingSpinner');
+            var form = document.querySelector('form');
+
+            form.addEventListener('submit', function (event) {
+                var confirmPasswordError = document.getElementById('User_ConfirmPassword-error');
+                
+                if (!form.checkValidity() || confirmPasswordError) {
+                    event.preventDefault();
+                    return; // Do nothing if there are validation errors
+                }
+
+                submitButton.disabled = true;
+                loadingSpinner.style.display = ''; // Show the spinner
+                document.getElementById('buttonText').style.display = 'none'; // Hide the button text
+
+                // Simulate form submission delay (replace this with your actual form submission code)
+                setTimeout(function () {
+                    // Enable the button after a short delay (e.g., 5 seconds)
+                    submitButton.disabled = false;
+                    loadingSpinner.style.display = 'none'; // Hide the spinner
+                    document.getElementById('buttonText').style.display = ''; // Show the button text
+                }, 5000);
+            });
+        });
+    </script>
+
+}

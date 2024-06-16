@@ -1,0 +1,75 @@
+﻿@page
+@model LMS.Pages.Classes.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete Class";
+}
+
+<h1>Delete Class</h1>
+<hr />
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Classes.DepartmentName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Classes.DepartmentName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Classes.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Classes.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Classes.CourseNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Classes.CourseNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Classes.Location)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Classes.Location)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Classes.CreditHours)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Classes.CreditHours)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Classes.StartTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Classes.StartTime)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Classes.EndTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Classes.EndTime)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Classes.MeetingDays)
+        </dt>
+        <dd class="col-sm-10">
+            @foreach (var day in Model.Classes.MeetingDays)
+            {
+                <span>@day</span>
+            }
+        </dd>
+    </dl>
+
+    <form method="post">
+        <input type="hidden" asp-for="Classes.Id" />
+        <a asp-page="./Index" class="btn btn-primary ms-0 me-1">
+            <i class="bi bi-arrow-left me-2"></i> Back to Classes
+        </a>
+        <button type="submit" class="btn btn-danger me-0 ms-1">
+            <i class="bi bi-trash-fill me-2"></i> Delete
+        </button>
+    </form>
+</div>

@@ -1,0 +1,30 @@
+﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<!-- Script to check if BirthDate field is over 16 years old -->
+<script>
+    (function ($) {
+        $.validator.addMethod("minimumage", function (value, element, params) {
+            if (!/Invalid|NaN/.test(new Date(value))) {
+                var today = new Date();
+                var birthDate = new Date(value);
+                var age = today.getFullYear() - birthDate.getFullYear();
+
+                if (birthDate.setFullYear(birthDate.getFullYear() + age) > today) {
+                    age--;
+                }
+
+                return age >= params.minage;
+            }
+
+            return false;
+        });
+
+        $.validator.unobtrusive.adapters.add("minimumage", ["minage"], function (options) {
+            options.rules["minimumage"] = {
+                minage: parseInt(options.params.minage)
+            };
+            options.messages["minimumage"] = options.message;
+        });
+    })(jQuery);
+</script>

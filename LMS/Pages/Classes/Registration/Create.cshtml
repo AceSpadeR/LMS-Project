@@ -1,0 +1,182 @@
+﻿@page
+@model LMS.Pages.Registration.CreateModel
+
+@{
+    ViewData["Title"] = "Registration";
+}
+
+
+<div class="row">
+    <div class="col-7">
+        <h1>Registration</h1>
+    </div>
+    <div class="col-5 text-end">
+        <div class="row">
+            <form method="post" asp-page-handler="Department" class="d-flex">
+                <select class="form-select me-2" id="exampleSelect1" name="dept">
+                    <option disabled selected> Filter By Department </option>
+                    @foreach (var d in Model.DepartmentList)
+                    {
+                        <option> @Html.DisplayFor(modelItem => d.Text) </option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary d-flex align-items-center">
+                    <i class="bi bi-funnel me-2"></i> Filter
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<!-- Show classes -->
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].DepartmentName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].CourseNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].Location)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].CreditHours)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].EndTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Classes[0].MeetingDays)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@if (Model.Classes is not null)
+{
+    foreach (var item in Model.Classes)
+    {
+                if (item.DepartmentName == Model.Department || Model.Department is null)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DepartmentName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CourseNumber)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Location)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreditHours)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EndTime)
+                        </td>
+                        <td>
+                            @foreach (var day in item.MeetingDays)
+                            {
+                                var shortDay = GetDayAbbreviation(day.ToString()) + " ";
+                                @shortDay
+                            }
+                        </td>
+                        <td class="align-middle">
+                            @if (!Model.RegisteredClassIDs.Contains(item.Id))
+                            {
+                                <form method="post" asp-page-handler="Add">
+                                    <div>
+                                        <input asp-for="Registration.ClassId" type="hidden" name="ClassId" value=@item.Id />
+                                        <i><span asp-validation-for="Registration.ClassId" class="text-danger small"></span></i>
+                                    </div>
+                                    <div>
+                                        <input asp-for="Registration.UserId" type="hidden" name="UserId" value="1" /> <!--ToDo: update so gets user id-->
+                                        <i><span asp-validation-for="Registration.UserId" class="text-danger small"></span></i>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-plus-lg"></i> Add
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form method="post" asp-page-handler="Drop">
+                                    <div>
+                                        <input type="hidden" name="ClassId" value=@item.Id />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-x-lg"></i> Drop
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+}
+    </tbody>
+</table>
+
+
+<!--
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Registration.ClassId" class="control-label"></label>
+                <select asp-for="Registration.ClassId" class ="form-control" asp-items="ViewBag.ClassId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+-->
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@functions {
+    string GetDayAbbreviation(string day)
+    {
+        switch (day)
+        {
+            case "Monday":
+                return "M";
+            case "Tuesday":
+                return "T";
+            case "Wednesday":
+                return "W";
+            case "Thursday":
+                return "TH";
+            case "Friday":
+                return "F";
+            default:
+                return day;
+        }
+    }
+}

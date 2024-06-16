@@ -1,0 +1,370 @@
+﻿@page
+@model LMS.Pages.Classes.DetailsModel
+
+@{
+    ViewData["Title"] = "Class Details";
+    int classId = Model.Classes.Id;
+}
+
+
+
+<h1>@Model.Classes.CourseNumber <i class="bi bi-dash-lg"></i> @Model.Classes.Title</h1>
+<hr /> 
+
+<div class="container">
+    <div class="row">
+
+        <!-- Class Details -->
+        <div class="col-md-4">
+            <h3 class="mt-2">Class Details</h3>
+            <hr />
+
+            <dl class="row">
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Classes.DepartmentName)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Classes.DepartmentName)
+                </dd>
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Classes.Title)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Classes.Title)
+                </dd>
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Classes.CourseNumber)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Classes.CourseNumber)
+                </dd>
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Classes.Location)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Classes.Location)
+                </dd>
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Classes.CreditHours)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Classes.CreditHours)
+                </dd>
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Classes.StartTime)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Classes.StartTime)
+                </dd>
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Classes.EndTime)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.Classes.EndTime)
+                </dd>
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.Classes.MeetingDays)
+                </dt>
+                <dd class="col-sm-7">
+                    @foreach (var day in Model.Classes.MeetingDays)
+                    {
+                        <span>@day</span>
+                    }
+                </dd>
+            </dl>
+            <hr />
+
+            @if (User.IsInRole("Instructor"))
+            {
+                @if (@Model.Submissions.Count > 0)
+                {
+                    <div>
+                        <html>
+                    <head>
+                        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                        <script type="text/javascript">
+                            google.charts.load("current", { packages: ["corechart"] });
+                            google.charts.setOnLoadCallback(drawChart);
+                            function drawChart() {
+                                var data = google.visualization.arrayToDataTable([
+                                    ['Letter Grade', 'Student Grades'],
+                                    ['A', @Model.studentGrades[0]],
+                                    ['A-', @Model.studentGrades[1]],
+                                    ['B+', @Model.studentGrades[2]],
+                                    ['B', @Model.studentGrades[3]],
+                                    ['B-', @Model.studentGrades[4]],
+                                    ['C+', @Model.studentGrades[5]],
+                                    ['C', @Model.studentGrades[6]],
+                                    ['C-', @Model.studentGrades[7]],
+                                    ['D+', @Model.studentGrades[8]],
+                                    ['D', @Model.studentGrades[9]],
+                                    ['D-', @Model.studentGrades[10]],
+                                    ['F', @Model.studentGrades[11]]
+                                ]);
+
+                                var options = {
+                                    title: 'Student Performance',
+                                    pieHole: 0.4,
+                                    legend: 'none',
+                                    pieSliceText: 'label',
+                                };
+
+                                var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                                chart.draw(data, options);
+                            }
+                        </script>
+                    </head>
+                    <body>
+                        <div class="d-flex justify-content-center">
+                            <div id="donutchart" style="width: 300px; height: 300px;"></div>
+                        </div>
+                        <hr />
+                    </body>
+                </html>
+                </div>
+                }
+                <div class="w-100 btn-group" role="group">
+                    <a asp-page="./Index" class="btn btn-primary ms-0 me-1">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Classes
+                    </a>
+                    <a asp-page="./Edit" asp-route-id="@Model.Classes.Id" class="btn btn-primary me-0 ms-1">
+                        <i class="bi bi-pencil-square me-2"></i> Edit
+                    </a>
+                </div>
+            }
+            else if (User.IsInRole("Student"))
+            {
+                <div class="mt-3">
+                    <a asp-page="../Index" class="btn btn-primary">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Assignment List -->
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-6">
+                    <h3 class="mt-2">Assignment List</h3>
+                </div>
+                <div class="col-6 text-end">
+                    @if (User.IsInRole("Instructor"))
+                    {
+                    <a id="createAssignmentButton" asp-page="./Assignments/Create" asp-route-id="@Model.Classes.Id" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-2"></i> Create Assignment
+                    </a>
+
+                    } 
+                    else if (User.IsInRole("Student"))
+                    {
+                        <h4 class="mt-2">Grade: <span class="h3"><b>@(Model.TotalMaxPoints != 0 ? $"{Model.FinalGradePercentage.ToString("P")} ({GetLetterGrade(Model.FinalGradePercentage)})" : "TBD")</b></span></h4>
+                    }
+                </div>
+            </div>
+            <hr />
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Assignment[0].Title)
+                        </th>
+                        @* <th>
+                            @Html.DisplayNameFor(model => model.Assignment[0].Description)
+                        </th> *@
+                        <th>
+                            @Html.DisplayNameFor(model => model.Assignment[0].DueDate)
+                        </th>
+
+                        @if (User.IsInRole("Instructor"))
+                        {
+                            <th>
+                                @Html.DisplayNameFor(model => model.Assignment[0].MaxPoints)
+                            </th>
+                            @* <th>
+                                @Html.DisplayNameFor(model => model.Assignment[0].SubmissionType)
+                            </th> *@
+                        } else if (User.IsInRole("Student"))
+                        {
+                            <th>
+                                Points
+                            </th>
+                        }
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Assignment)
+                    {
+                        @if (User.IsInRole("Instructor"))
+                        {
+                            <tr onclick="location.href='@Url.Page("/Classes/Assignments/SubmittedAssignments/Index", new { id = item.Id })';" style="cursor: pointer;">
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                    @if (Model.Submissions.Where(s => s.AssignmentId == item.Id).Any() && Model.Submissions.Where(s => s.AssignmentId == item.Id).All(s => s.Points != null))
+                                    {
+                                        <span class="badge bg-success align-middle">All Graded</span>
+                                    }
+                                    else if (Model.Submissions.Where(s => s.AssignmentId == item.Id).Any() && Model.Submissions.Where(s => s.AssignmentId == item.Id).Any(s => s.Points == null))
+                                    {
+                                        <span class="badge bg-warning align-middle">Needs Grading</span>
+                                    }
+                                </td>
+                                @* <td>
+                                    @Html.DisplayFor(modelItem => item.Description)
+                                </td> *@
+                                <td>
+                                    @($"{item.DueDate:MMM d, yyyy h:mm tt}")
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.MaxPoints)
+                                </td>
+                                @* <td>
+                                    @Html.DisplayFor(modelItem => item.SubmissionType)
+                                </td> *@
+                                <td class="align-middle">
+                                    <div class="w-100 btn-group" role="group">
+                                        <a asp-page="./Assignments/Edit" asp-route-id="@item.Id" asp-route-classId="@Model.Classes.Id" class="btn btn-primary ms-0 me-1">
+                                            <i class="bi bi-pencil-square"></i> Edit
+                                        </a>
+                                        <a asp-page="./Assignments/Delete" asp-route-id="@item.Id" asp-route-classId="@Model.Classes.Id" class="btn btn-danger me-0 ms-1">
+                                            <i class="bi bi-trash-fill"></i> Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        else if (User.IsInRole("Student"))
+                        {
+                            <tr onclick="location.href='@Url.Page("/Classes/Assignments/Submission/Index", new { id = item.Id })';" style="cursor: pointer;">
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                    @if (Model.Submissions.Where(s => s.AssignmentId == item.Id).Any() && Model.Submissions.Where(s => s.AssignmentId == item.Id).First().Points is not null)
+                                    {
+                                        <span class="badge bg-success align-middle">Graded</span>
+                                    }
+                                </td>
+                                @* <td>
+                                    @Html.DisplayFor(modelItem => item.Description)
+                                </td> *@
+                                <td>
+                                    @($"{item.DueDate:MMM d, yyyy h:mm tt}")
+                                    @if (Model.Submissions.Where(s => s.AssignmentId == item.Id).Any() && Model.Submissions.Where(s => s.AssignmentId == item.Id).First().TurnInTime > item.DueDate)
+                                    {
+                                        <span class="badge bg-danger align-middle">Late</span>
+                                    }
+                                    else if (!Model.Submissions.Where(s => s.AssignmentId == item.Id).Any() && DateTime.Now > item.DueDate)
+                                    {
+                                        <span class="badge bg-danger align-middle">Missing</span>
+                                    }
+                                </td>
+                                <td style="width:18%">
+                                    @{
+                                        var points = Model.Submissions
+                                        .Where(s => s.AssignmentId == item.Id)
+                                        .Any() && Model.Submissions
+                                        .Where(s => s.AssignmentId == item.Id)
+                                        .First()
+                                        .Points is not null
+                                        ? $"<b>{Model.Submissions.Where(s => s.AssignmentId == item.Id).First().Points}</b>"
+                                        : "-";
+                                    }
+                                    @Html.Raw(points) / @Html.DisplayFor(modelItem => item.MaxPoints)
+                                </td>
+                                <td class="align-middle" style="width:28%">
+                                    <!-- Below checks if Assignment is submitted -->
+                                    @if (Model.Submissions.Where(s => s.AssignmentId == item.Id).Any())
+                                    {
+                                        <a asp-page="/Classes/Assignments/Submission/Index" asp-route-id="@item.Id" class="btn btn-success w-100 d-flex align-items-center">
+                                            <i class="bi bi-check-lg me-2"></i> Submitted
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-page="/Classes/Assignments/Submission/Index" asp-route-id="@item.Id" class="btn btn-primary w-100">
+                                            <i class="bi bi-folder2-open me-2"></i> Submit
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            @if (User.IsInRole("Student"))
+            {
+                <hr />
+                <div class="row align-items-baseline">
+                    <div class="col-6">
+                        <h4>Assignments</h4>
+                    </div>
+                    <div class="col-3 text-center">
+                        <h4>@Model.TotalPointsReceived / @Model.TotalMaxPoints</h4>
+                    </div>
+                    <div class="col-3 text-center">
+                        <h3><b>@(Model.TotalMaxPoints != 0 ? $"{Model.FinalGradePercentage.ToString("P")}" : "TBD")</b></h3>
+                    </div>
+                </div>
+                <hr />
+            }
+
+        </div>
+    </div>
+</div>
+
+
+@functions {
+    string GetLetterGrade(double percent)
+    {
+        if (percent >= 0.94)
+        {
+            return "A";
+        }
+        else if (percent >= 0.9)
+        {
+            return "A-";
+        }
+        else if (percent >= 0.87)
+        {
+            return "B+";
+        }
+        else if (percent >= 0.84)
+        {
+            return "B";
+        }
+        else if (percent >= 0.8)
+        {
+            return "B-";
+        }
+        else if (percent >= 0.77)
+        {
+            return "C+";
+        }
+        else if (percent >= 0.74)
+        {
+            return "C";
+        }
+        else if (percent >= 0.7)
+        {
+            return "C-";
+        }
+        else if (percent >= 0.67)
+        {
+            return "D+";
+        }
+        else if (percent >= 0.64)
+        {
+            return "D";
+        }
+        else if (percent >= 0.6)
+        {
+            return "D-";
+        }
+        else
+        {
+            return "F";
+        }
+    }
+}
