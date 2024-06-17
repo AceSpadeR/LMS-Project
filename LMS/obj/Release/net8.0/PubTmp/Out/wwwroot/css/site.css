@@ -1,0 +1,54 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.lux .fc-event {
+    background-color: #258cfb;
+    border-color: #808080;
+    height: auto;
+    display: list-item
+
+    
+}
+
+fc .fc-button {
+    background: black !important;
+   
+}
+
+.fc-daygrid-event {
+    white-space: normal !important;
+    align-items: normal !important;
+    font-size: 10px;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active {
+    background-color: black !important;
+    border-color: var(--fc-button-active-border-color) !important;
+    color: var(--fc-button-text-color) !important;
+}
+
+:root {
+    --fc-border-color: black;
+    --fc-daygrid-event-dot-width: 5px;
+}
+

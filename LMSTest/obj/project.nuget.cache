@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "cQegHgAb/eIgJC5lM1Z+JKOhk4mk2QUldSta4XQkDO3pKdL6G/frBl2ICwTyv0qK9UCj4jyrQqwWs0HoHPogFA==",
+  "dgSpecHash": "B+OWVA15YqZUUYF25d3ckjfwZHqsalfwfNqBkS1zLVBlBEwc9UdCJEQj2oG+MkPirZWrzcCNUWnsLEyxHy408A==",
   "success": true,
-  "projectFilePath": "C:\\Users\\aceof\\Source\\Repos\\LMS-StellarSoftware\\LMSTest\\LMSTest.csproj",
+  "projectFilePath": "C:\\Users\\aceof\\source\\repos\\LMS-Project\\LMSTest\\LMSTest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\aceof\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\aceof\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

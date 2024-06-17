@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "y7AgTFdnYf1+ZDi1TPucLiHyBs3YXctn9E8FXhW4zMkmaMH3fz0EmVpjz1auVbGzcoD7yphG8saNT0DJuxIqsw==",
+  "dgSpecHash": "fJ+CRosgFkvumO47fc6aRNfc+5ipCrQdXjAQUtGbqwPqUI2mU1nfSccosvihIhGe4mLdaqYV0S4XC4oMMbPJtQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\aceof\\Source\\Repos\\LMS-StellarSoftware\\SeleniumTests\\SeleniumTests.csproj",
+  "projectFilePath": "C:\\Users\\aceof\\source\\repos\\LMS-Project\\SeleniumTests\\SeleniumTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\aceof\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\aceof\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

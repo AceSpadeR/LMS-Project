@@ -52,3 +52,16 @@ fc .fc-button {
     --fc-daygrid-event-dot-width: 5px;
 }
 
+#calendar button {
+    background-color: black !important;
+}
+
+
+#calendar a {
+    color: black !important;
+    text-decoration: none;
+}
+
+#calendar event {
+    background-color: grey;
+}

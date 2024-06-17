@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\aceof\\Source\\Repos\\LMS-StellarSoftware\\LMS\\LMS.csproj": {}
+    "C:\\Users\\aceof\\source\\repos\\LMS-Project\\LMS\\LMS.csproj": {}
   },
   "projects": {
-    "C:\\Users\\aceof\\Source\\Repos\\LMS-StellarSoftware\\LMS\\LMS.csproj": {
+    "C:\\Users\\aceof\\source\\repos\\LMS-Project\\LMS\\LMS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\aceof\\Source\\Repos\\LMS-StellarSoftware\\LMS\\LMS.csproj",
+        "projectUniqueName": "C:\\Users\\aceof\\source\\repos\\LMS-Project\\LMS\\LMS.csproj",
         "projectName": "LMS",
-        "projectPath": "C:\\Users\\aceof\\Source\\Repos\\LMS-StellarSoftware\\LMS\\LMS.csproj",
+        "projectPath": "C:\\Users\\aceof\\source\\repos\\LMS-Project\\LMS\\LMS.csproj",
         "packagesPath": "C:\\Users\\aceof\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\aceof\\Source\\Repos\\LMS-StellarSoftware\\LMS\\obj\\",
+        "outputPath": "C:\\Users\\aceof\\source\\repos\\LMS-Project\\LMS\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

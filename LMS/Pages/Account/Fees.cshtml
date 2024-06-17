@@ -17,7 +17,7 @@
     </div>
 }
 
-<h1 class="row justify-content-center">Fees Due: $@Model.TotalCreditHours</h1>
+<h1 class="row justify-content-center">Fees Due: @string.Format("{0:C}", Math.Round(Model.TotalCreditHours))</h1>
 <hr />
 
 <div class="row justify-content-center">

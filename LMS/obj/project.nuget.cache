@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+P+zmdiTc9QFGWXqtvTBh5/pe88wAUp1bdMITjjkycbmo3T1Pg+QVk3AWafxxumk0wIQQqusdURZbSr7SDYucg==",
+  "dgSpecHash": "TqyRTMAJL+yvURgwg3EFHN7cE1vcB03F/LznwGCRijQstRK+6sX5EiVxmAiCyBq+XrKAnY4PUEQ4J8D+BpEiBA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\aceof\\Source\\Repos\\LMS-StellarSoftware\\LMS\\LMS.csproj",
+  "projectFilePath": "C:\\Users\\aceof\\source\\repos\\LMS-Project\\LMS\\LMS.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\aceof\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\aceof\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

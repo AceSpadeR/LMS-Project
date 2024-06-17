@@ -32,7 +32,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-StripeConfiguration.ApiKey = "sk_test_51OgsLhBWhaZwsKbkQ9PFD9TcRLRegBy0IwKVAgcaOO95woY0ex8AfjpfeTFb7U2lplBFTfaTdBd6E9fUnkhdSkFx00zqzkXRLE";
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

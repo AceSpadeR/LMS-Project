@@ -1,0 +1,109 @@
+﻿.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    transform: translateY(-4px);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.btn-primary:hover {
+    background-color: #333333;
+}
+
+.outside-nav {
+    color: rgba(255,255,255,.5);
+}
+
+.outside-nav:hover {
+    color: rgba(255,255,255);
+}
+
+.outside-nav-active {
+    color: rgba(255,255,255);
+}
+
+.grade-input {
+    font-size: 1.75rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--bs-heading-color);
+}
+
+.grade-input::placeholder {
+    font-size: 1.3rem;
+}
+
+.tox-tinymce {
+    border-radius: 0px !important;
+}
+
+.tox .tox-edit-area__iframe {
+    background-color: #f8f9fa !important;
+}
+
+.tox .tox-editor-header,
+.tox .tox-menubar,
+.tox .tox-toolbar-overlord,
+.tox .tox-toolbar__primary,
+.tox .tox-statusbar {
+    /*background-color: #f8f9fa !important;*/
+}
+
+.tox .tox-tbtn:hover,
+.tox .tox-tbtn--enabled,
+.tox .tox-tbtn:focus,
+.tox .tox-tbtn--active,
+.tox .tox-mbtn:hover,
+.tox .tox-mbtn--enabled,
+.tox .tox-mbtn:focus,
+.tox .tox-mbtn--active,
+.tox .tox-collection-list,
+.tox .tox-collection__item:hover,
+.tox .tox-collection__item--active {
+    background: #dee0e2 !important;
+}
+
+.profile-img {
+    align-self: center;
+    border-radius: 50%;
+    box-sizing: border-box;
+    object-fit: cover;
+    object-position: center;
+    width: 300px;
+    height: 300px;
+}
+
+.link-anchor {
+    background-color: #eceeef;
+    min-height: 48px;
+}
+
+#confetti {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.confetti {
+    position: absolute;
+    width: 20px;
+    height: 10px;
+    background-color: #f00;
+    animation: fall 4s ease-out infinite;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(calc(100vh + 100px)) rotate(720deg);
+    }
+}
