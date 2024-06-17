@@ -1,2 +1,2 @@
 # LMS
- Copy oF Group Project
+ Copy of Group Project
